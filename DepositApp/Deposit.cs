@@ -17,18 +17,24 @@ namespace DepositApp
         private double capitalizationRate;
         private Client client;
 
+        // Изначальная сумма вклада.
         public double BaseDeposit 
         { 
             get => baseDeposit; 
             private set => baseDeposit = (value < 1000) ? throw new Exception("Min deposit value is 1000") : Math.Round(value, 2) ; }
         public DepositType DepositType { get => type; }
+
+        // В условии сказано что депозит может быть оформлен только на лицо старше 16 лет
         public Client Client 
         { 
             get => client; 
             private set => client = DateTime.Today.Subtract(value.Birthday).Days / 365 < 16 ? throw new ArgumentException("You are too young.") : value; 
         }
+        public double Rate { get => rate; }
+        public int Period { get => period; }
+        public double CapitalizationRate { get => capitalizationRate; }
 
-        // Для создания достаточно знать начальную сумму и тип депозита.
+        // Для создания достаточно знать начальную сумму, тип депозита и клиента на которого он оформляется.
         public Deposit(double baseDeposit, DepositType type, Client client)
         {
             BaseDeposit = baseDeposit;        
@@ -62,9 +68,8 @@ namespace DepositApp
             }
         }
 
-
         // Метод для расчета ожидаемой прибыли по депозиту за {month} месяцев. Возвращает массив с ожидаемым баллансом по месяцам.
-        public double[] Ballance(int month)
+        public double[] ExpectedBallance(uint month)
         {
             double[] ballance = new double[month];
             
