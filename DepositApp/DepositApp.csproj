@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="Deposit.cs" />
-    <Compile Include="Dictionary.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

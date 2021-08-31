@@ -1,45 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DepositApp
 {
+    public enum DepositType
+    {
+        Standart,
+        Capital,
+        Premium
+    }
     class Deposit
     {
-        double baseDeposit;
-        Dictionary.DepositType type;
-
+        private double baseDeposit;
+        private DepositType type;
         private double rate;
         private int period;
         private double capitalizationRate;
+        private Client client;
 
-        public double BaseDeposit { get => baseDeposit; set => baseDeposit = (value < 1000) ? throw new Exception("Min deposit value is 1000") : Math.Round(value, 2) ; }        
-               
+        public double BaseDeposit 
+        { 
+            get => baseDeposit; 
+            private set => baseDeposit = (value < 1000) ? throw new Exception("Min deposit value is 1000") : Math.Round(value, 2) ; }
+        public DepositType DepositType { get => type; }
+        public Client Client 
+        { 
+            get => client; 
+            private set => client = DateTime.Today.Subtract(value.Birthday).Days / 365 < 16 ? throw new ArgumentException("You are too young.") : value; 
+        }
 
-        public Deposit(double baseDeposit, Dictionary.DepositType type)
+        // Для создания достаточно знать начальную сумму и тип депозита.
+        public Deposit(double baseDeposit, DepositType type, Client client)
         {
             BaseDeposit = baseDeposit;        
             this.type = type;
+            Client = client;
 
-            switch(type)
+            // Назначаем ставку, период начисления процентов, процент капитализации в зависимости от типа депозита.
+            switch (type)
             {
-                case Dictionary.DepositType.Standart:
+                case DepositType.Standart:
                     {
                         rate = 0.21;
                         period = 12;
                         capitalizationRate = 0;
                         break;
                     }
-                case Dictionary.DepositType.Capital:
+                case DepositType.Capital:
                     {
                         rate = 0.14;
                         period = 1;
                         capitalizationRate = 1;
                         break;
                     }
-                case Dictionary.DepositType.Premium:
+                case DepositType.Premium:
                     {
                         rate = 0.17;
                         period = 1;
@@ -49,13 +62,16 @@ namespace DepositApp
             }
         }
 
+
+        // Метод для расчета ожидаемой прибыли по депозиту за {month} месяцев. Возвращает массив с ожидаемым баллансом по месяцам.
         public double[] Ballance(int month)
         {
             double[] ballance = new double[month];
-
+            
+            // Производим расчет в зависимости от выбранного плана.
             switch(type)
             {
-                case Dictionary.DepositType.Standart:
+                case DepositType.Standart:
                     {
                         for (int i = 0; i < ballance.Length; i++)
                         {
@@ -63,7 +79,7 @@ namespace DepositApp
                         }
                         break;
                     }
-                case Dictionary.DepositType.Capital:
+                case DepositType.Capital:
                     {
                         double tempDepositValue = baseDeposit;
 
@@ -73,11 +89,11 @@ namespace DepositApp
 
                             ballance[i] = Math.Round(tempDepositValue + monthProfit, 2);
 
-                            tempDepositValue += monthProfit*capitalizationRate;
+                            tempDepositValue += monthProfit * capitalizationRate;
                         }
                         break;
                     }
-                case Dictionary.DepositType.Premium:
+                case DepositType.Premium:
                     {
                         double tempDepositValue = baseDeposit;
                         double capitalizationProfit = 0;
@@ -87,9 +103,9 @@ namespace DepositApp
                             double monthProfit = tempDepositValue * (rate / 12);
                             capitalizationProfit += monthProfit * (1 - capitalizationRate);
 
-                            ballance[i] = Math.Round(tempDepositValue + monthProfit*capitalizationRate + capitalizationProfit, 2);
+                            ballance[i] = Math.Round(tempDepositValue + monthProfit * capitalizationRate + capitalizationProfit, 2);
 
-                            tempDepositValue += monthProfit*capitalizationRate;                            
+                            tempDepositValue += monthProfit * capitalizationRate;                           
                         }
                         break;
                     }

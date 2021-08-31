@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DepositApp
 {
@@ -10,14 +6,17 @@ namespace DepositApp
     {
         static void Main(string[] args)
         {
-            Client client = new Client("John Doe", new DateTime(1990, 01, 15), Dictionary.Sex.Male, new Deposit(2000, Dictionary.DepositType.Premium));
+            // TODO: Поместить все потенциально опасные операции в try...catch
 
-            double[] profit = new double[36];
-            profit = client.GetBallance(36);
+            Client client = new Client("John Doe", new DateTime(1990, 01, 15), Sex.Male);
 
-            foreach (double item in profit)
+            client.AddDeposit(1000, DepositType.Capital);
+
+            var expectedBallance = client.GetBallance(24);
+
+            for (int i = 0; i < expectedBallance.Length; i++)
             {
-                Console.WriteLine(item-2000);
+                Console.WriteLine($"{i + 1} -> {expectedBallance[i]}");
             }
         }
     }
